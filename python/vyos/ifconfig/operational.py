@@ -131,11 +131,11 @@ class Operational(Control):
 
         try:
             with open(self.cachefile(self.ifname),'r') as f:
-                magic = f.readline().strip()
+                magic = f.readline(5_000_000).strip()
                 if magic != self.cache_magic:
                     print(f'bad magic {ifname}')
                     return no_stats
-                stats['timestamp'] = f.readline().strip()
+                stats['timestamp'] = f.readline(5_000_000).strip()
                 for line in f:
                     k, v = line.split(',')
                     stats[k] = int(v)

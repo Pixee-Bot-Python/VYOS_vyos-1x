@@ -166,7 +166,7 @@ def _contentfile(flag, default=''):
         if not os.path.isfile(flagfile):
             continue
         with open(flagfile) as f:
-            content = f.readline().strip()
+            content = f.readline(5_000_000).strip()
         return content or default
 
     return ''

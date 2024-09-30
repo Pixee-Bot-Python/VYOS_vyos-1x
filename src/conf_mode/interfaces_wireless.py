@@ -262,7 +262,7 @@ def generate(wifi):
         with open('/sys/class/ieee80211/{physical_device}/addresses'.format(**wifi), 'r') as f:
             # some PHYs tend to have multiple interfaces and thus supply multiple MAC
             # addresses - we only need the first one for our calculation
-            tmp = f.readline().rstrip()
+            tmp = f.readline(5_000_000).rstrip()
             tmp = EUI(tmp).value
             # mask last nibble from the MAC address
             tmp &= 0xfffffffffff0

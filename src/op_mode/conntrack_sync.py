@@ -177,7 +177,7 @@ def show_status(raw: bool):
 
     if os.path.isfile(failover_state_file):
         with open(failover_state_file, "r") as f:
-            failover_state = f.readline()
+            failover_state = f.readline(5_000_000)
 
     if config.exists(['service', 'conntrack-sync', 'expect-sync']):
         expect_sync_protocols = config.values(['service', 'conntrack-sync', 'expect-sync'])
