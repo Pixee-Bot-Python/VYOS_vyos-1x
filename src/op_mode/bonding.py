@@ -24,6 +24,7 @@ from tabulate import tabulate
 
 import vyos.opmode
 from vyos.configquery import ConfigTreeQuery
+from security import safe_command
 
 def list_to_dict(data, headers, basekey):
     data_list = {basekey: []}
@@ -36,7 +37,7 @@ def list_to_dict(data, headers, basekey):
 
 def show_lacp_neighbors(raw: bool, interface: typing.Optional[str]):
     headers = ["Interface", "Member", "Local ID", "Remote ID"]
-    data = subprocess.run(f"cat /proc/net/bonding/{interface}", stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, shell=True, text=False).stdout.decode('utf-8')
+    data = safe_command.run(subprocess.run, f"cat /proc/net/bonding/{interface}", stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, shell=True, text=False).stdout.decode('utf-8')
     if 'Bonding Mode: IEEE 802.3ad Dynamic link aggregation' not in data:
         raise vyos.opmode.DataUnavailable(f"{interface} is not present or not configured with mode 802.3ad")
 
@@ -73,7 +74,7 @@ def show_lacp_detail(raw: bool, interface: typing.Optional[str]):
     bondList = []
 
     for interface in intList:
-        data = subprocess.run(f"cat /proc/net/bonding/{interface}", stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, shell=True, text=False).stdout.decode('utf-8')
+        data = safe_command.run(subprocess.run, f"cat /proc/net/bonding/{interface}", stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, shell=True, text=False).stdout.decode('utf-8')
         if 'Bonding Mode: IEEE 802.3ad Dynamic link aggregation' not in data:
             continue
 
