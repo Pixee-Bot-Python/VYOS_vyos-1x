@@ -57,8 +57,7 @@ def post_request(url: str,
     response = requests.post(url,
                              data=data,
                              headers=headers,
-                             verify=False,
-                             timeout=timeout)
+                             verify=True, timeout=timeout)
     return response
 
 
