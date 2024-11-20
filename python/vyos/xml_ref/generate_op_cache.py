@@ -23,10 +23,10 @@ from argparse import ArgumentParser
 from os.path import join
 from os.path import abspath
 from os.path import dirname
-from xml.etree import ElementTree as ET
 from xml.etree.ElementTree import Element
 from typing import TypeAlias
 from typing import Optional
+import defusedxml.ElementTree
 
 _here = dirname(__file__)
 
@@ -144,7 +144,7 @@ def insert_node(n: Element, l: list[PathData], path = None) -> None:
 
 
 def parse_file(file_path, l):
-    tree = ET.parse(file_path)
+    tree = defusedxml.ElementTree.parse(file_path)
     root = tree.getroot()
     for n in root.iterfind("*"):
         insert_node(n, l)
