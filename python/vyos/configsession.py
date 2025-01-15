@@ -21,6 +21,7 @@ import subprocess
 from vyos.defaults import directories
 from vyos.utils.process import is_systemd_service_running
 from vyos.utils.dict import dict_to_paths
+from security import safe_command
 
 CLI_SHELL_API = '/bin/cli-shell-api'
 SET = '/opt/vyatta/sbin/my_set'
@@ -142,7 +143,7 @@ class ConfigSession(object):
             print("Could not tear down session {0}: {1}".format(self.__session_id, e), file=sys.stderr)
 
     def __run_command(self, cmd_list):
-        p = subprocess.Popen(cmd_list, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=self.__session_env)
+        p = safe_command.run(subprocess.Popen, cmd_list, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, env=self.__session_env)
         (stdout_data, stderr_data) = p.communicate()
         output = stdout_data.decode()
         result = p.wait()

@@ -28,6 +28,7 @@ from vyos.utils.auth import get_current_user
 from vyos.utils.process import cmd
 from vyos.utils.file import read_file
 from vyos.template import inc_ip
+from security import safe_command
 
 base_path = ['system', 'login']
 users = ['vyos1', 'vyos-roxx123', 'VyOS-123_super.Nice']
@@ -98,7 +99,7 @@ class TestSystemLogin(VyOSUnitTestSHIM.TestCase):
 
         for user in users:
             tmp = ['su','-', user]
-            proc = Popen(tmp, stdin=PIPE, stdout=PIPE, stderr=PIPE)
+            proc = safe_command.run(Popen, tmp, stdin=PIPE, stdout=PIPE, stderr=PIPE)
             tmp = "{}\nuname -a".format(user)
             proc.stdin.write(tmp.encode())
             proc.stdin.flush()
