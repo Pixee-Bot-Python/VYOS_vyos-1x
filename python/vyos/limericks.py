@@ -13,7 +13,7 @@
 # You should have received a copy of the GNU Lesser General Public
 # License along with this library.  If not, see <http://www.gnu.org/licenses/>.
 
-import random
+import secrets
 
 limericks = [
 
@@ -69,4 +69,4 @@ users drove him away from Nantucket.
 
 
 def get_random():
-    return limericks[random.randint(0, len(limericks) - 1)]
+    return limericks[secrets.SystemRandom().randint(0, len(limericks) - 1)]
