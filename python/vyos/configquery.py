@@ -37,6 +37,7 @@ from vyos.utils.error import cli_shell_api_err
 from vyos.xml_ref import multi_to_list
 from vyos.xml_ref import is_tag
 from vyos.base import Warning
+from security import safe_command
 
 config_file = os.path.join(directories['config'], 'config.boot')
 
@@ -152,7 +153,7 @@ def verify_mangling(key_mangling):
 
 def op_mode_run(cmd):
     """ low-level to avoid overhead  """
-    p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+    p = safe_command.run(subprocess.Popen, cmd, stdout=subprocess.PIPE)
     out = p.stdout.read()
     p.wait()
     return p.returncode, out.decode()

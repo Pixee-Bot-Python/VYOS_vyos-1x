@@ -19,6 +19,7 @@ from subprocess import Popen
 from subprocess import PIPE
 from subprocess import STDOUT
 from subprocess import DEVNULL
+from security import safe_command
 
 def popen(command, flag='', shell=None, input=None, timeout=None, env=None,
           stdout=PIPE, stderr=PIPE, decode='utf-8'):
@@ -76,7 +77,7 @@ def popen(command, flag='', shell=None, input=None, timeout=None, env=None,
         stdin = PIPE
         input = input.encode() if type(input) is str else input
 
-    p = Popen(command, stdin=stdin, stdout=stdout, stderr=stderr,
+    p = safe_command.run(Popen, command, stdin=stdin, stdout=stdout, stderr=stderr,
               env=env, shell=use_shell)
 
     pipe = p.communicate(input, timeout)
