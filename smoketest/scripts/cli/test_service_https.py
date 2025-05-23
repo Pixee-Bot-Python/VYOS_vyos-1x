@@ -165,23 +165,23 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
         url = f'https://{address}/retrieve'
         payload = {'data': '{"op": "showConfig", "path": []}', 'key': f'{key}'}
         headers = {}
-        r = request('POST', url, verify=False, headers=headers, data=payload)
+        r = request('POST', url, verify=True, headers=headers, data=payload)
         # Must get HTTP code 200 on success
         self.assertEqual(r.status_code, 200)
 
         payload_invalid = {'data': '{"op": "showConfig", "path": []}', 'key': 'invalid'}
-        r = request('POST', url, verify=False, headers=headers, data=payload_invalid)
+        r = request('POST', url, verify=True, headers=headers, data=payload_invalid)
         # Must get HTTP code 401 on invalid key (Unauthorized)
         self.assertEqual(r.status_code, 401)
 
         payload_no_key = {'data': '{"op": "showConfig", "path": []}'}
-        r = request('POST', url, verify=False, headers=headers, data=payload_no_key)
+        r = request('POST', url, verify=True, headers=headers, data=payload_no_key)
         # Must get HTTP code 401 on missing key (Unauthorized)
         self.assertEqual(r.status_code, 401)
 
         # Check path config
         payload = {'data': '{"op": "showConfig", "path": ["system", "login"]}', 'key': f'{key}'}
-        r = request('POST', url, verify=False, headers=headers, data=payload)
+        r = request('POST', url, verify=True, headers=headers, data=payload)
         response = r.json()
         vyos_user_exists = 'vyos' in response.get('data', {}).get('user', {})
         self.assertTrue(vyos_user_exists, "The 'vyos' user does not exist in the response.")
@@ -208,7 +208,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
         }}
         """
 
-        r = request('POST', graphql_url, verify=False, headers=headers, json={'query': query_valid_key})
+        r = request('POST', graphql_url, verify=True, headers=headers, json={'query': query_valid_key})
         success = r.json()['data']['SystemStatus']['success']
         self.assertTrue(success)
 
@@ -224,7 +224,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
         }
         """
 
-        r = request('POST', graphql_url, verify=False, headers=headers, json={'query': query_invalid_key})
+        r = request('POST', graphql_url, verify=True, headers=headers, json={'query': query_invalid_key})
         success = r.json()['data']['SystemStatus']['success']
         self.assertFalse(success)
 
@@ -240,7 +240,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
         }
         """
 
-        r = request('POST', graphql_url, verify=False, headers=headers, json={'query': query_no_key})
+        r = request('POST', graphql_url, verify=True, headers=headers, json={'query': query_no_key})
         success = r.json()['data']['SystemStatus']['success']
         self.assertFalse(success)
 
@@ -261,7 +261,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
           }
         }
         """
-        r = request('POST', graphql_url, verify=False, headers=headers, json={'query': mutation})
+        r = request('POST', graphql_url, verify=True, headers=headers, json={'query': mutation})
 
         token = r.json()['data']['AuthToken']['data']['result']['token']
 
@@ -284,7 +284,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
         }
         """
 
-        r = request('POST', graphql_url, verify=False, headers=headers, json={'query': query})
+        r = request('POST', graphql_url, verify=True, headers=headers, json={'query': query})
         success = r.json()['data']['ShowVersion']['success']
         self.assertTrue(success)
 
@@ -299,7 +299,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
         self.cli_set(base_path)
         self.cli_commit()
 
-        r = request('POST', url, verify=False, headers=headers, data=payload)
+        r = request('POST', url, verify=True, headers=headers, data=payload)
         # api not configured; expect 503
         self.assertEqual(r.status_code, 503)
 
@@ -307,14 +307,14 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
         self.cli_commit()
         sleep(2)
 
-        r = request('POST', url, verify=False, headers=headers, data=payload)
+        r = request('POST', url, verify=True, headers=headers, data=payload)
         # api configured; expect 200
         self.assertEqual(r.status_code, 200)
 
         self.cli_delete(base_path + ['api'])
         self.cli_commit()
 
-        r = request('POST', url, verify=False, headers=headers, data=payload)
+        r = request('POST', url, verify=True, headers=headers, data=payload)
         # api deleted; expect 503
         self.assertEqual(r.status_code, 503)
 
@@ -332,7 +332,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
             'data': '{"op": "show", "path": ["system", "image"]}',
             'key': f'{key}',
         }
-        r = request('POST', url, verify=False, headers=headers, data=payload)
+        r = request('POST', url, verify=True, headers=headers, data=payload)
         self.assertEqual(r.status_code, 200)
 
     @ignore_warning(InsecureRequestWarning)
@@ -349,7 +349,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
             'data': '{"op": "generate", "path": ["macsec", "mka", "cak", "gcm-aes-256"]}',
             'key': f'{key}',
         }
-        r = request('POST', url, verify=False, headers=headers, data=payload)
+        r = request('POST', url, verify=True, headers=headers, data=payload)
         self.assertEqual(r.status_code, 200)
 
     @ignore_warning(InsecureRequestWarning)
@@ -374,7 +374,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
 
         payload = {'data': json.dumps({"op": "set", "path": payload_path}), 'key': key}
 
-        r = request('POST', url, verify=False, headers=headers, data=payload)
+        r = request('POST', url, verify=True, headers=headers, data=payload)
         self.assertEqual(r.status_code, 200)
 
     @ignore_warning(InsecureRequestWarning)
@@ -391,7 +391,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
             'data': '{"op": "save"}',
             'key': f'{key}',
         }
-        r = request('POST', url, verify=False, headers=headers, data=payload)
+        r = request('POST', url, verify=True, headers=headers, data=payload)
         self.assertEqual(r.status_code, 200)
 
     @ignore_warning(InsecureRequestWarning)
@@ -408,7 +408,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
             'data': '{"op": "reset", "path": ["ip", "arp", "table"]}',
             'key': f'{key}',
         }
-        r = request('POST', url, verify=False, headers=headers, data=payload)
+        r = request('POST', url, verify=True, headers=headers, data=payload)
         self.assertEqual(r.status_code, 200)
 
     @ignore_warning(InsecureRequestWarning)
@@ -425,7 +425,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
             'data': '{"op": "add"}',
             'key': f'{key}',
         }
-        r = request('POST', url, verify=False, headers=headers, data=payload)
+        r = request('POST', url, verify=True, headers=headers, data=payload)
         self.assertEqual(r.status_code, 400)
         self.assertIn('Missing required field "url"', r.json().get('error'))
 
@@ -433,7 +433,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
             'data': '{"op": "delete"}',
             'key': f'{key}',
         }
-        r = request('POST', url, verify=False, headers=headers, data=payload)
+        r = request('POST', url, verify=True, headers=headers, data=payload)
         self.assertEqual(r.status_code, 400)
         self.assertIn('Missing required field "name"', r.json().get('error'))
 
@@ -441,7 +441,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
             'data': '{"op": "set_default"}',
             'key': f'{key}',
         }
-        r = request('POST', url, verify=False, headers=headers, data=payload)
+        r = request('POST', url, verify=True, headers=headers, data=payload)
         self.assertEqual(r.status_code, 400)
         self.assertIn('Missing required field "name"', r.json().get('error'))
 
@@ -449,7 +449,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
             'data': '{"op": "show"}',
             'key': f'{key}',
         }
-        r = request('POST', url, verify=False, headers=headers, data=payload)
+        r = request('POST', url, verify=True, headers=headers, data=payload)
         self.assertEqual(r.status_code, 200)
 
     @ignore_warning(InsecureRequestWarning)
@@ -475,7 +475,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
             'data': '{"op": "save", "file": "/tmp/tmp-config.boot"}',
             'key': f'{key}',
         }
-        r = request('POST', url, verify=False, headers=headers, data=payload)
+        r = request('POST', url, verify=True, headers=headers, data=payload)
         self.assertEqual(r.status_code, 200)
 
         # change config
@@ -483,7 +483,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
             'data': '{"op": "set", "path": ["interfaces", "dummy", "dum1", "address", "192.0.2.31/32"]}',
             'key': f'{key}',
         }
-        r = request('POST', url_config, verify=False, headers=headers, data=payload)
+        r = request('POST', url_config, verify=True, headers=headers, data=payload)
         self.assertEqual(r.status_code, 200)
 
         # load config from URL
@@ -491,7 +491,7 @@ class TestHTTPSService(VyOSUnitTestSHIM.TestCase):
             'data': '{"op": "load", "file": "http://localhost:8000/tmp-config.boot"}',
             'key': f'{key}',
         }
-        r = request('POST', url, verify=False, headers=headers, data=payload)
+        r = request('POST', url, verify=True, headers=headers, data=payload)
         self.assertEqual(r.status_code, 200)
 
         # cleanup tmp nginx conf
