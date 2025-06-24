@@ -126,7 +126,7 @@ def get_remote_version(url):
     """
     headers = {}
     try:
-        remote_data = requests.get(url=url, headers=headers)
+        remote_data = requests.get(url=url, headers=headers, timeout=60)
         remote_data.raise_for_status()
         if remote_data.status_code != 200:
             return False
