@@ -39,6 +39,7 @@ from vyos.utils.file import read_file
 from vyos.utils.file import read_json
 from vyos.utils.process import popen
 from vyos.utils.process import DEVNULL
+from security import safe_requests
 
 version_file = os.path.join(vyos.defaults.directories['data'], 'version.json')
 
@@ -126,7 +127,7 @@ def get_remote_version(url):
     """
     headers = {}
     try:
-        remote_data = requests.get(url=url, headers=headers)
+        remote_data = safe_requests.get(url=url, headers=headers)
         remote_data.raise_for_status()
         if remote_data.status_code != 200:
             return False
