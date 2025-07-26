@@ -25,6 +25,7 @@ from systemd.journal import JournalHandler
 from yaml import safe_load
 
 from vyos.template import render
+from security import safe_command
 
 # define a path to the configuration file and template
 config_file = '/etc/cloud/cloud.cfg.d/20_vyos_network.cfg'
@@ -51,7 +52,7 @@ def check_interface_dhcp(iface_name: str) -> bool:
     # If no - it will keep running in foreground
     try:
         run(['ip', 'l', 'set', iface_name, 'up'])
-        run(dhclient_command, timeout=5)
+        safe_command.run(run, dhclient_command, timeout=5)
         check_result = True
     except TimeoutExpired:
         pass

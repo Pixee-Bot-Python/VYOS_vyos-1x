@@ -20,6 +20,7 @@ import subprocess
 
 from vyos.configtree import ConfigTree
 from vyos.utils.boot import boot_configuration_complete
+from security import safe_command
 
 class VyOSError(Exception):
     """
@@ -153,9 +154,9 @@ class ConfigSourceSession(ConfigSource):
 
     def _run(self, cmd):
         if self.__session_env:
-            p = subprocess.Popen(cmd, stdout=subprocess.PIPE, env=self.__session_env)
+            p = safe_command.run(subprocess.Popen, cmd, stdout=subprocess.PIPE, env=self.__session_env)
         else:
-            p = subprocess.Popen(cmd, stdout=subprocess.PIPE)
+            p = safe_command.run(subprocess.Popen, cmd, stdout=subprocess.PIPE)
         out = p.stdout.read()
         p.wait()
         p.communicate()
